@@ -1,0 +1,38 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Model checkpoints and large binaries
+*.pth
+*.pt
+model.ckpt*
+checkpoints/*.pth
+checkpoints/*.pt
+
+# Dataset and outputs
+*.csv
+*.tsv
+*.jsonl
+response-of-LLM.json
+
+# macOS
+.DS_Store
