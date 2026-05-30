@@ -155,7 +155,6 @@ My friend and I went to the store.
 
 * Large checkpoints and generated artifacts are excluded using `.gitignore`
 * Update `CHECKPOINT_PATH` inside `app/main.py` if using a different model filename
-* Ensure sufficient RAM/VRAM for loading GPT-2 Medium (355M)
 
 ---
 
