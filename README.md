@@ -1,4 +1,4 @@
-# 🚀 LLM-355M
+# GPT-Lite
 
 A GPT-style Large Language Model built from scratch using PyTorch, integrated with pretrained GPT-2 Medium (355M) weights for instruction-following text generation.
 
