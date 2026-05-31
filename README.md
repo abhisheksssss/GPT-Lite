@@ -80,7 +80,7 @@ pip install -r requirements.txt
 
 # 📥 Add Model Checkpoint
 
-Download Model weight LLM.pth from Hugging Face : https://huggingface.co/abhishek001001/GPT-355M/tree/main
+Download Model weight full_merged_model.pth from Hugging Face : [https://huggingface.co/abhishek001001/GPT-355M/tree/main](https://huggingface.co/abhishek001001/GPT-LITE/resolve/main/full_merged_model.pth)
 
 Place your trained checkpoint inside:
 
