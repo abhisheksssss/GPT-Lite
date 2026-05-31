@@ -1,14 +1,15 @@
 # existing imports
 from fastapi import FastAPI
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 from pydantic import BaseModel
 import torch
 from pathlib import Path
 from app.model import GPTModel
 from app.config import BASE_CONFIG
+from fastapi.middleware.cors import CORSMiddleware
 # from generate import generate
 
-from app.generate import generate
+from app.generate import generate, generate_stream
 from app.model import (
     text_to_token_ids,
     token_ids_to_text,
@@ -25,7 +26,7 @@ model = GPTModel(BASE_CONFIG)
 
 # Resolve checkpoint path relative to this file (project root/LLM-355M/checkpoints)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CHECKPOINT_PATH = PROJECT_ROOT / "checkpoints" / "LLM.pth"
+CHECKPOINT_PATH = PROJECT_ROOT / "checkpoints" / "full_merged_model.pth"
 
 if not CHECKPOINT_PATH.exists():
     raise FileNotFoundError(
@@ -48,10 +49,23 @@ class PromptRequest(BaseModel):
     instruction: Optional[str] = None
     input: Optional[str] = ""
     max_new_tokens: int = 100
+    stream: bool = False
+    temperature: float = 0.8
+    top_k: Optional[int] = 40
+    repetition_penalty: float = 1.1
 
 model.eval()
 
 app=FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def format_input(entry):
     # Accept either a plain string prompt or a dict with 'instruction' and 'input'
@@ -92,12 +106,34 @@ def generate_test(request:PromptRequest):
     else:
         return {"error": "no prompt or instruction provided"}
     try:
+        if request.stream:
+            idx = text_to_token_ids(input_text, tokenizer).to(device)
+
+            def token_generator():
+                for next_token in generate_stream(
+                    model=model,
+                    idx=idx,
+                    max_new_tokens=request.max_new_tokens,
+                    context_size=BASE_CONFIG["context_length"],
+                    eos_id=50256,
+                    temperature=request.temperature,
+                    top_k=request.top_k,
+                    repetition_penalty=request.repetition_penalty
+                ):
+                    token_id = int(next_token.item())
+                    yield tokenizer.decode([token_id])
+
+            return StreamingResponse(token_generator(), media_type="text/plain")
+
         token_ids = generate(
             model=model,
             idx=text_to_token_ids(input_text,tokenizer).to(device),
             max_new_tokens=request.max_new_tokens,
             context_size=BASE_CONFIG["context_length"],
-            eos_id=50256
+            eos_id=50256,
+            temperature=request.temperature,
+            top_k=request.top_k,
+            repetition_penalty=request.repetition_penalty
         )
         generated_text = token_ids_to_text(token_ids,tokenizer)
         # extract the model response after the input prompt
