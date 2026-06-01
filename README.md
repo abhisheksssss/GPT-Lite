@@ -18,6 +18,9 @@ LLM-355M/
 │
 ├── app/                     # FastAPI inference server
 │   └── main.py
+│   
+├── gpt-lite/                     # Next Js Frontend
+│   └── page.tsx
 │
 ├── checkpoints/             # Model checkpoints
 │   └── LLM.pth
@@ -91,7 +94,7 @@ checkpoints/
 Example:
 
 ```bash
-checkpoints/gpt2-medium-355M-sft.pth
+checkpoints/full_merged_model.pth
 ```
 
 ---
@@ -158,14 +161,6 @@ My friend and I went to the store.
 
 ---
 
-# 🔮 Future Improvements
-
-* Streaming token generation
-* Quantization support
-* LoRA fine-tuning
-* Hugging Face integration
-* Docker deployment
-* Web UI for inference
 
 ---
 
