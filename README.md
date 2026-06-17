@@ -18,9 +18,6 @@ LLM-355M/
 │
 ├── app/                     # FastAPI inference server
 │   └── main.py
-│   
-├── gpt-lite/                     # Next Js Frontend
-│   └── page.tsx
 │
 ├── checkpoints/             # Model checkpoints
 │   └── LLM.pth
